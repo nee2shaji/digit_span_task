@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Digit Span</title>
+<script src="jspsych-6.3.1/jquery-3.3.1.min.js"></script>
+<script src="jspsych-6.3.1/jspsych.js"></script>	
+<script src="jspsych-6.3.1/plugins/jspsych-audio-keyboard-response.js"></script>
+<script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>
+<script src="jspsych-6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
+<script src="jspsych-6.3.1/plugins/jspsych-survey-html-form.js"></script>
+<script src="jspsych-6.3.1/plugins/jspsych-call-function.js"></script>
+<script src="fds_adaptive.js"></script>
+<script src="fds_hindi.js"></script>
+
+<link href="jspsych-6.3.1/css/jspsych.css" rel="stylesheet" type="text/css">
+<link href="jspsych-6.3.1/css/fds-style.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<script>
+
+//Define Timeline
+var timeline = [];
+
+//Array to store the spoken digits
+var fds_sounds = return_fds_adaptive_folder();
+
+//Function to load sounds only if useAudio is set to true in bds_adaptive.js
+function loadSounds(){
+if(useAudio){
+	return fds_sounds;
+	} else {
+	return null;
+  }}; 
+
+//Function to give the option for a local save of the data
+var localSave;
+
+// function saveData() {
+// 	if(localSave == 1) {
+// 		var identifier = 'FDS_'+Math.round(new Date().getTime()/1000)+'.csv';
+// 		jsPsych.data.get().localSave('csv',identifier);
+// 		alert("You may now close this tab.");
+// 	} else {
+// 		alert("You may now close this tab.");
+// 		}
+// 	};	
+
+var form_get_user_data = {
+  type: 'survey-html-form',
+  preamble: '<p> Hello there! Welcome to the <b>digit span task.</b> </p>' +
+  	  '<p> A digit-span task is used to measure memory\'s number storage capacity. <br> ' +
+		'It measures verbal short-term memory - the system that allows for temporary storage of information, <br>and is crucial in everyday tasks such as remembering a telephone number or understanding long sentences.</p>' +
+	  '<p>This experiment is conducted as a part of Cognitive Neuroscience Project.<br>Familiarity with Hindi numerals is required for this task. Kindly attempt only once.<br>' +
+	  'All the data collected will be used only for the purpose of study and will be deleted after the analysis.</p><br>',
+  html: '<p> Your age : <input name="age" type="number" min="4" max="85" required/><br><br>' +
+	  'The language you are more comfortable in :<input type="radio" name="lang" id="lang_hindi" value="hindi" /><label for="lang_hindi">Hindi</label>' +
+	  '<input type="radio" name="lang" id="lang_eng" value="eng" checked/><label for="lang_eng">English</label></p><br>'
+};
+
+function saveData() {
+  var xhr = new XMLHttpRequest();
+  var identifier = Math.round(new Date().getTime()/1000);
+  xhr.open('POST', 'write_data.php'); // change 'write_data.php' to point to php script.
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
+    if(xhr.status == 200){
+      var response = JSON.parse(xhr.responseText);
+      console.log(response.success);
+    }
+  };
+  user_data_obj = jsPsych.data.get().filter([{trial_type: 'survey-html-form'}]).select('response').values[0];
+//   console.log(user_data_obj);
+  jsPsych.data.addProperties({
+	user_id: identifier,
+	age: user_data_obj['age'],
+	lang: user_data_obj['lang']
+  });
+//   jsPsych.data.get().localSave('csv',identifier);
+  xhr.send(jsPsych.data.get().filter([{designation: 'FDS-RESPONSE'}, {designation:'FDS-HINDI'}]).json());
+  alert("You may now close this tab.");
+}
+
+//Final screen
+var save_data = {
+	type: 'html-button-response',
+	stimulus: '<p>This concludes the task. Thank you for participating :)</p>',
+	choices: ['Exit'],
+	// on_finish: function(data){
+	// 	localSave = jsPsych.data.get().last(1).values()[0].button_pressed;			
+	// 	localSave = 1;
+	// }		
+};
+
+//Push components to experiment timeline
+timeline.push(form_get_user_data);
+timeline.push(fds_adaptive); //from bds_adaptive.js
+timeline.push(fds_hindi);
+// timeline.push(save_data); //final screen asking about data
+
+//Initialize the Experiment
+jsPsych.init({
+	timeline: timeline,
+	preload_audio: loadSounds(),
+	on_finish: saveData
+});
+
+</script>
+</body>
+</html>
