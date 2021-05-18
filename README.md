@@ -1,34 +1,13 @@
-# Forward Digit Span
+# Effect of Languages on Digit Span Task (Hindi and English)
 
 ## Task Description
-This module consists of an adaptive forward digit span (BDS) task, commonly used as a measure of short-term memory.
+Digit Span measures verbal short-term memory - the systems that allows temporary strage of information. In this study, we examine the digit span task in a set of 26 bilingual individuals, fluent in both Hindi and English. We test the digit span task performance in these bilingual individuals. Majority of these individuals have Hindi as their mother tongue. In spite of this, it is seen that performance in English is better for longer digit spans for both groups.
 
-On each trial, participant hear or see a string of digits. 
-Then, participants have to click on buttons to report these 
-digits in sequential order.
+## Procedure & Results
+The experiment was website based and was developed using jsPsych, JavaScript library for running behavioral experiments in a web browser.
+Result dataset is in digitspan_user_data.csv. Results show that digit span is longer in English than in Hindi. Possible explanation for the longer span in English can be attributed to the facts that the subjects might be more familiar or have affinity towards English digits in daily usage. Baddeley et. al. showed that the number of words an individual can hold in short-term memory is limited by the amount of time it takes to pronounce the words. This might have an effect on bilingual speakers fluent in both languages Hindi as well as English.
 
-## Notes about Script
-The script is easily customizable (e.g., audio or visual 
-digit presentation, starting span, number of trials, etc.)
-The task is adaptive based on a 1:2 staircase procedure -
-that is, a correct answer will increase the span by one, 
-whereas two incorrect answers in a row will decrease the
-span by one.
-
-## Using the Script
-The script outputs two important variables. The first is 
-'fds_adaptive' which should be added to the experiment timeline
-in the main html file -- e.g., timeline.push(fds_adaptive);
-
-The second is 'return_fds_adaptive_folder' which should be pushed or
-concatenated with other audio files for preloading purposes.
-This is a function, so users can specify a different folder
-name in the main html file
-
--- e.g., var foldername = return_fds_adaptive_folder();
-
-The folder is not applicable if you are planning
-on running a visual version of the task as no additional
-files are needed.
-
-##### Stephen Van Hedger, April 2020
+## References
+- A bilingual word-length effect: Implications for intelligence testing and the relative ease of mental calculation in Welsh and English
+_Ellis, N. C., & Hennelly, R. A. (1980)_
+- jsPsych scripts by Stephen Van Hedger, April 2020
